@@ -34,7 +34,7 @@ async def new_event(event: EventModel):
     SSE.add_event(event)
     return {
         "message": "Event added", 
-        "count": SSE.EVENTS.count()}
+        "count": len(SSE.EVENTS)}
     
 @app.get("/stream")
 async def stream_events(req: Request):
@@ -42,7 +42,7 @@ async def stream_events(req: Request):
     async def stream_generator():
     
         while True:
-            if req.is_disconnected():
+            if await req.is_disconnected():
                 print("SEE Disconnected")
                 break
             
