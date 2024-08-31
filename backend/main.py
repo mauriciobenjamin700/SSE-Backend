@@ -1,7 +1,5 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 import asyncio
 
@@ -26,20 +24,20 @@ app.add_middleware(
 )
 
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     return {"msg": "Hello World"}
 
 @app.post("/emit")
-async def new_event(event: EventModel):
+async def new_event(event: EventModel) -> dict:
     SSE.add_event(event)
     return {
         "message": "Event added", 
         "count": len(SSE.EVENTS)}
     
 @app.get("/stream")
-async def stream_events(req: Request):
+async def stream_events(req: Request) -> EventSourceResponse:
     
-    async def stream_generator():
+    async def stream_generator() -> asyncio.Generator[str, asyncio.Any, None]:
     
         while True:
             if await req.is_disconnected():
